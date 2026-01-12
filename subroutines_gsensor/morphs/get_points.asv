@@ -1,0 +1,64 @@
+function [fig_2d, ax_2d, m, w, u, v, u_op_struct, v_op_struct, u_ad_struct, v_ad_struct, kernel] = get_points(I, is_full)
+    [fig_2d, ia_obj] = get_interactive_figure(I);
+    ax_2d = ia_obj.ax;
+    if is_full
+        title(strcat('Full mode: corner at center'))
+    else
+        title('Non-full mode: corner at side')
+    end
+
+    p_text_func_general = @(order, p_str, p_text_add) strcat( ...
+        'Mark', {' '}, order, {' '}, 'point (', p_str, ') of', {' '}, p_text_add, ...
+        ' in 2D and hit ENTER');
+
+    u_ad_struct = get_side(ia_obj, 'u', 'small', 'adjacent', p_text_func_general);
+    v_ad_struct = get_side(ia_obj, 'v', 'large', 'adjacent', p_text_func_general);
+    m = calc_intersect(u_ad_struct.t, u_ad_struct.e, v_ad_struct.t, v_ad_struct.e);
+    annotate_point(ia_obj.ax, m, 'm')
+        
+    if ~is_full
+        u = calc_foot_point(m, u_ad_struct);
+        annotate_point(ia_obj.ax, u, 'u')
+        make_line(ia_obj.ax, m, u, '-')
+
+        v = calc_foot_point(m, v_ad_struct);
+        annotate_point(ia_obj.ax, v, 'v')
+        make_line(ia_obj.ax, m, v, '-')
+
+        w_ad_struct = get_side(ia_obj, 'w', [], [], p_text_func_general);
+        w = w_ad_struct.w;
+        make_line(ia_obj.ax, m, w, '-')
+        
+        u_op_struct = [];
+        v_op_struct = [];
+    else
+        u_op_struct = get_side(ia_obj, 'u', 'small', 'opposite', p_text_func_general);
+        u = calc_intersect(u_op_struct.t, u_op_struct.e, u_ad_struct.t, u_ad_struct.e);
+        annotate_point(ia_obj.ax, u, 'u')
+        make_line(ia_obj.ax, m, u, '-')
+
+        v_op_struct = get_side(ia_obj, 'v', 'large', 'opposite', p_text_func_general);
+        v = calc_intersect(v_op_struct.t, v_op_struct.e, v_ad_struct.t, v_ad_struct.e);
+        annotate_point(ia_obj.ax, v, 'v')
+        make_line(ia_obj.ax, m, v, '-')
+
+        w = calc_intersect(u_op_struct.t, u_op_struct.e, v_op_struct.t, v_op_struct.e);
+        annotate_point(ia_obj.ax, w, 'w')
+        make_line(ia_obj.ax, m, w, '-')
+        make_line(ia_obj.ax, u, w, '-')
+        make_line(ia_obj.ax, v, w, '-')
+    end
+    kernel.k_c_cell = {};
+    kernel.k_o_cell = {};
+    kernel_orders = {'1.', '2.', '3.', '4.'};
+    for ii = 1:4
+        kernel.k_c_cell{ii} = mark_point(p_text_func_general(kernel_orders{ii}, 'k_c', 'kernel corners'), ia_obj, 'y*');
+        annotate_point(ia_obj.ax, kernel.k_c_cell{ii}, strcat('k_c_', num2str(ii)))
+        kernel.k_o_cell{ii} = mark_point(p_text_func_general(kernel_orders{ii}, 'k_o', 'kernel outer points'), ia_obj, 'wo');
+        annotate_point(ia_obj.ax, kernel.k_o_cell{ii}, strcat('k_o_', num2str(ii)))
+    end
+
+    mark_point('Click anywhere and hit ENTER to close', ia_obj, '.');
+    savefig(fullfile('imgs', '2d.fig'))
+    close(fig_2d)
+end

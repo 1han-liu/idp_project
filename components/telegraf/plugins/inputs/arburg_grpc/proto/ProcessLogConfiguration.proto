@@ -1,0 +1,69 @@
+syntax = "proto2";
+
+import "google/protobuf/descriptor.proto";
+
+package ProtoProcessLog;
+
+
+import "ProtoProcessLogEntryContainer.proto";
+
+message OperatorInfo {
+	optional string name = 1;
+}
+  
+extend google.protobuf.EnumValueOptions {
+	optional OperatorInfo operatorInfo = 50001;
+}
+
+message ConditionGroup
+{
+	required uint64 id = 1;
+	repeated Comparison comparisons = 2;
+	repeated Change changes = 3;
+}
+
+message Parameter
+{
+	repeated Resolution resolutions = 1;
+	required uint32 pos = 2;
+	required ProtoProcessLogEntryDataWert.Table tab = 3;
+	optional uint32 kid = 4;
+}
+
+message Resolution
+{
+	required uint32 value = 1;
+	repeated uint64 conditionGroupRef = 2;
+}
+
+message Comparison
+{
+	required uint32 pos = 1;
+	required ProtoProcessLogEntryDataWert.Table tab = 2;
+	required ProtoWert value = 3;
+	required Operator operator = 4;
+}
+
+enum Operator
+{
+	INVALID = 0;
+	EQUAL = 6 [(operatorInfo) = {name: "eq"}];
+	NOT_EQUAL = 1 [(operatorInfo) = {name: "ne"}];
+	GREATER = 2 [(operatorInfo) = {name: "gt"}];
+	GREATER_OR_EQUAL = 3 [(operatorInfo) = {name: "gte"}];
+	LESS = 4 [(operatorInfo) = {name: "lt"}];
+	LESS_OR_EQUAL = 5 [(operatorInfo) = {name: "lte"}];	
+}
+
+message Change
+{
+	required uint32 pos = 1;
+	required ProtoProcessLogEntryDataWert.Table tab = 2;
+}
+
+message ProcessLogConfiguration
+{
+	optional bool diagnosticsEnabled = 3;
+	repeated Parameter parameters = 1;
+	repeated ConditionGroup conditionGroups = 2;
+}

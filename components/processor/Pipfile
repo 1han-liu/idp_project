@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+pika = "*"
+line-protocol-parser = "*"
+func-timeout = "*"
+influxdb-client = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"

@@ -1,0 +1,11 @@
+syntax = "proto2";
+
+package ProtoProcessLog;
+
+
+import "ProtoProcessLogEntryContainer.proto";
+import "ProcessLogConfiguration.proto";
+
+service ProcessLogDataProvider{
+	rpc RequestProcessLogDataStream(ProcessLogConfiguration) returns (stream ProtoProcessLogEntryContainer);
+}

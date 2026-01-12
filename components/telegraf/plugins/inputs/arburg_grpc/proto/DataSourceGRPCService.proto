@@ -1,0 +1,101 @@
+﻿syntax = "proto2";
+
+package ProtoDataSource;
+
+service DataSourceProvider{
+	rpc RequestDataSourceValue(DataRequest) returns (ValueData);
+	rpc RequestDataSourceValueStream(DataRequest) returns (stream ValueResult);
+	rpc RequestDataSourceChangeStream(ChangeRequest) returns (stream ChangeResult);
+}
+
+service DataSourceManipulator{
+	rpc ManipulateData(ManipulationRequest) returns (ManipulationResult);
+}
+
+message ManipulationRequest
+{
+	required Identifier identifier = 1;
+	required ValueData data = 2;	
+}
+
+message ManipulationResult
+{
+	required bool success = 1;
+}
+
+message DataRequest
+{
+	required Identifier identifier = 1;
+}
+
+message ChangeRequest
+{
+}
+
+message Identifier {
+    oneof id {
+        uint32 kid = 1;
+        string address = 2;
+    }
+    oneof dataLevel {
+        LogicalDataLevel logicalDataLevel = 3;
+        PhysicalDataLevel physicalDataLevel = 4;
+    }
+}
+
+enum LogicalDataLevel {
+    PRODUCTION = 0;
+    PREPARATION = 1;
+}
+
+enum PhysicalDataLevel {
+	_1 = 0;
+	_2 = 1;
+    _M = 2;
+}
+
+message ChangeResult {
+	required uint64 timestamp = 11;
+    required ValueChange change = 4;
+}
+
+message ValueResult {
+	required uint64 timestamp = 11;
+    required ValueData value = 2;
+}
+
+message ValueChange {
+	required Identifier identifier = 3;
+	optional ValueData previousValue = 1;
+	required ValueData newValue = 2;
+}
+
+message ValueData
+{
+    oneof value {
+	    int32 INT32= 2;
+	    int64 INT64= 3;
+	    uint32 UINT32 =4;
+	    uint64 UINT64 = 5;
+	    string STRING = 6;
+	    double DOUBLE = 7;
+	    float FLOAT = 8;
+	    bool BOOL = 9;
+	    bytes BYTES = 10;
+	    MeldungList MELDUNGLIST = 11;
+    }
+}
+message MeldungList {
+	repeated Meldung entries = 1;
+}
+
+message Meldung {
+	required MeldungId id = 1;
+	optional string type = 3;
+	optional string text = 2;
+}
+
+message MeldungId {
+	required int32 groupNumber = 1;
+	required int32 meldungNumber = 2;
+}

@@ -1,0 +1,295 @@
+syntax = "proto2";
+
+
+package ProtoProcessLog;
+
+import "google/protobuf/descriptor.proto";
+
+
+message TableInfo {
+    enum MachineType {
+        SGM = 0;
+        AKF = 1;
+    }
+    optional string name = 1;
+    optional MachineType machineType = 2;
+}
+  
+extend google.protobuf.EnumValueOptions {
+    optional TableInfo tableInfo = 50000;
+}
+
+message ProtoProcessLogEntryContainer {
+    required uint64 startTime = 1;
+    required uint32 startTimeMs = 2;
+    repeated ProtoProcessLogEntry entries = 4;
+}
+
+message ProtoProcessLogEntry {
+    required uint64 timestamp = 1;
+    repeated ProtoProcessLogEntryDataWert protoProcessLogData = 2;
+    repeated ProtoProcessLogEntryConditionGroup protoProcessLogConditionGroups = 3;
+
+}
+
+message ProtoProcessLogEntryConditionGroup {
+    required uint64 id = 1;
+    required bool isValid = 2;
+}
+
+message ProtoProcessLogEntryDataWert {
+    enum Table {
+        INVALID = 0;
+        EBENE_0_BYTE = 1 [(tableInfo) = {name: "ebene[0].byte_tab", machineType: SGM}];
+        EBENE_0_WORD = 2 [(tableInfo) = {name: "ebene[0].word_tab", machineType: SGM}];
+        EBENE_0_DWORD = 3 [(tableInfo) = {name: "ebene[0].dword_tab", machineType: SGM}];
+        EBENE_0_REAL = 4 [(tableInfo) = {name: "ebene[0].real_tab", machineType: SGM}];
+        EBENE_1_BYTE = 5 [(tableInfo) = {name: "ebene[1].byte_tab", machineType: SGM}];
+        EBENE_1_WORD = 6 [(tableInfo) = {name: "ebene[1].word_tab", machineType: SGM}];
+        EBENE_1_DWORD = 7 [(tableInfo) = {name: "ebene[1].dword_tab", machineType: SGM}];
+        EBENE_1_REAL = 8 [(tableInfo) = {name: "ebene[1].real_tab", machineType: SGM}];
+        ISTWERTE_RAM_DWORD = 9 [(tableInfo) = {name: "istwerte_ram.dword_tab", machineType: SGM}];
+        ISTWERTE_RAM_WORD = 10 [(tableInfo) = {name: "istwerte_ram.word_tab", machineType: SGM}];
+        ISTWERTE_RAM_REAL = 11 [(tableInfo) = {name: "istwerte_ram.real_tab", machineType: SGM}];
+        ISTWERTE_RAM_BYTE = 12 [(tableInfo) = {name: "istwerte_ram.byte_tab", machineType: SGM}];
+        ANALOGINPUT = 13 [(tableInfo) = {name: "analoginput_tab", machineType: SGM}];
+        ANALOGINPUT_FILTER = 14 [(tableInfo) = {name: "analoginput_filter_tab", machineType: SGM}];
+        ANALOG_ABSOLUTWERT = 15 [(tableInfo) = {name: "analog_absolutwert_tab", machineType: SGM}];
+        ANALOG_NULLWERT = 16 [(tableInfo) = {name: "analog_nullwert_tab", machineType: SGM}];
+        ANALOGOUTPUT = 17 [(tableInfo) = {name: "analogoutput_tab", machineType: SGM}];
+        OUTPUT = 18 [(tableInfo) = {name: "output_tab", machineType: SGM}];
+        INPUT = 19 [(tableInfo) = {name: "input_tab", machineType: SGM}];
+        INPUT_FILTER = 20 [(tableInfo) = {name: "input_filter_tab", machineType: SGM}];
+        OUTPUT_ANZEIGE = 21 [(tableInfo) = {name: "output_anzeige_tab", machineType: SGM}];
+        CMOS1_REAL = 22 [(tableInfo) = {name: "cmos1.real_tab", machineType: SGM}];
+        CMOS1_WORD = 23 [(tableInfo) = {name: "cmos1.word_tab", machineType: SGM}];
+        CMOS1_DWORD= 24 [(tableInfo) = {name: "cmos1.dword_tab", machineType: SGM}];
+        EEPROM_CMOS_WORD = 25 [(tableInfo) = {name: "eeprom_cmos.word_tab", machineType: SGM}];
+        EEPROM_CMOS_REAL = 26 [(tableInfo) = {name: "eeprom_cmos.real_tab", machineType: SGM}];
+        EEPROM_CMOS_DWORD = 27 [(tableInfo) = {name: "eeprom_cmos.dword_tab", machineType: SGM}];
+        EEPROM_CMOS_BYTE = 28 [(tableInfo) = {name: "eeprom_cmos.byte_tab", machineType: SGM}];
+        EBENEN_RAM_1_BYTE = 29 [(tableInfo) = {name: "ebenen_ram[1].byte_tab", machineType: SGM}];
+        EBENEN_RAM_1_WORD = 30 [(tableInfo) = {name: "ebenen_ram[1].word_tab", machineType: SGM}];
+        EBENEN_RAM_1_REAL = 31 [(tableInfo) = {name: "ebenen_ram[1].real_tab", machineType: SGM}];
+        EBENEN_RAM_1_DWORD = 32 [(tableInfo) = {name: "ebenen_ram[1].dword_tab", machineType: SGM}];
+        EBENEN_RAM_0_BYTE = 33 [(tableInfo) = {name: "ebenen_ram[0].byte_tab", machineType: SGM}];
+        EBENEN_RAM_0_WORD = 34 [(tableInfo) = {name: "ebenen_ram[0].word_tab", machineType: SGM}];
+        EBENEN_RAM_0_REAL = 35 [(tableInfo) = {name: "ebenen_ram[0].real_tab", machineType: SGM}];
+        EBENEN_RAM_0_DWORD = 36 [(tableInfo) = {name: "ebenen_ram[0].dword_tab", machineType: SGM}];
+        MASCHINENPARAMETER = 37 [(tableInfo) = {name: "maschinenparameter", machineType: SGM}];
+        FESTWERTE = 38 [(tableInfo) = {name: "festwerte", machineType: SGM}];
+        FESTWERT_BYTE = 39 [(tableInfo) = {name: "festwert_byte_tab", machineType: SGM}];
+        FESTWERT_WORD = 40 [(tableInfo) = {name: "festwert_word_tab", machineType: SGM}];
+        WANDLERKONSTANTE = 41 [(tableInfo) = {name: "wandlerkonstante", machineType: SGM}];
+        KOMMUNIKATION = 42 [(tableInfo) = {name: "kommunikations_tab", machineType: SGM}];
+        KOMMUNIKATION_B = 43 [(tableInfo) = {name: "kommunikations_b_tab", machineType: SGM}];
+        KOMMUNIKATION_D = 44 [(tableInfo) = {name: "kommunikations_d_tab", machineType: SGM}];
+        KOMMUNIKATION_I = 45 [(tableInfo) = {name: "kommunikations_i_tab", machineType: SGM}];
+        KOMMUNIKATION_LI = 46 [(tableInfo) = {name: "kommunikations_li_tab", machineType: SGM}];
+        KOMMUNIKATION_R = 47 [(tableInfo) = {name: "kommunikations_r_tab", machineType: SGM}];
+        SOLLWERT_D = 48 [(tableInfo) = {name: "sollwert_d_tab", machineType: SGM}];
+        SOLLWERT_I = 49 [(tableInfo) = {name: "sollwert_i_tab", machineType: SGM}];
+        SOLLWERT_LI = 50 [(tableInfo) = {name: "sollwert_li_tab", machineType: SGM}];
+        SOLLWERT_IREG = 51 [(tableInfo) = {name: "sollwert_ireg_tab", machineType: SGM}];
+        SOLLWERT_ISYNC = 52 [(tableInfo) = {name: "sollwert_isync_tab", machineType: SGM}];
+        SOLLWERT_LISYNC = 53 [(tableInfo) = {name: "sollwert_lisync_tab", machineType: SGM}];
+        SOLLWERT_R = 54 [(tableInfo) = {name: "sollwert_r_tab", machineType: SGM}];
+        SOLLWERT_RSYNC = 55 [(tableInfo) = {name: "sollwert_rsync_tab", machineType: SGM}];
+        PROCESSLOG_STR = 56 [(tableInfo) = {machineType: SGM}];
+        KID = 57 [(tableInfo) = {name: "kid", machineType: SGM}];
+        BASIS_INPUT = 58 [(tableInfo) = {name: "basis_input_tab", machineType: SGM}];
+        BASIS_KOMM = 59 [(tableInfo) = {name: "basis_komm_tab", machineType: SGM}];
+        OUTPUT_REMOTE = 60 [(tableInfo) = {name: "output_remote_tab", machineType: SGM}];
+        ANALOG_ABSOLUTWERT_L = 61 [(tableInfo) = {name: "analog_absolutwert_l_tab", machineType: SGM}];
+        PIWID = 62 [(tableInfo) = {name: "piwid", machineType: SGM}];
+        EBENE_AKTIV_BYTE = 63 [(tableInfo) = {name: "ebene_aktiv.byte_tab", machineType: SGM}];
+        EBENE_AKTIV_WORD = 64 [(tableInfo) = {name: "ebene_aktiv.word_tab", machineType: SGM}];
+        EBENE_AKTIV_DWORD = 65 [(tableInfo) = {name: "ebene_aktiv.dword_tab", machineType: SGM}];
+        EBENE_AKTIV_REAL = 66 [(tableInfo) = {name: "ebene_aktiv.real_tab", machineType: SGM}];
+        EBENEN_RAM_AKTIV_BYTE = 67 [(tableInfo) = {name: "ebenen_ram_aktiv.byte_tab", machineType: SGM}];
+        EBENEN_RAM_AKTIV_WORD = 68 [(tableInfo) = {name: "ebenen_ram_aktiv.word_tab", machineType: SGM}];
+        EBENEN_RAM_AKTIV_DWORD = 69 [(tableInfo) = {name: "ebenen_ram_aktiv.dword_tab", machineType: SGM}];
+        EBENEN_RAM_AKTIV_REAL = 70 [(tableInfo) = {name: "ebenen_ram_aktiv.real_tab", machineType: SGM}];
+        ISTWERT_ANZEIGE = 71 [(tableInfo) = {name: "istwert_anzeige_tab", machineType: SGM}];
+        ANALOGINPUT_L = 72 [(tableInfo) = {name: "analoginput_l_tab", machineType: SGM}];
+        TEXT_EBENE_0_AUFTRAG = 73 [(tableInfo) = {name: "text_ebene[0].auftrag_tab", machineType: SGM}];
+        TEXT_EBENE_0_BESCHREIBUNG_TEXTE = 74 [(tableInfo) = {machineType: SGM}];
+        TEXT_EBENE_0_EINRICHTASSI_WKZ = 75 [(tableInfo) = {machineType: SGM}];
+        TEXT_EBENE_0_FKP = 76 [(tableInfo) = {name: "text_ebene[0].fkp_tab", machineType: SGM}];
+        TEXT_EBENE_0_TEXT = 77 [(tableInfo) = {name: "text_ebene[0].text_tab", machineType: SGM}];
+        TEXT_EBENE_1_AUFTRAG = 78 [(tableInfo) = {name: "text_ebene[1].auftrag_tab", machineType: SGM}];
+        TEXT_EBENE_1_BESCHREIBUNG_TEXTE = 79 [(tableInfo) = {machineType: SGM}];
+        TEXT_EBENE_1_EINRICHTASSI_WKZ = 80 [(tableInfo) = {machineType: SGM}];
+        TEXT_EBENE_1_FKP = 81 [(tableInfo) = {name: "text_ebene[1].fkp_tab", machineType: SGM}];
+        TEXT_EBENE_1_TEXT = 82 [(tableInfo) = {name: "text_ebene[1].text_tab", machineType: SGM}];
+        KOMAPROTOKOLLPARAMETER_0_IDS = 83 [(tableInfo) = {machineType: SGM}];
+        KOMAPROTOKOLLPARAMETER_0_SPES = 84 [(tableInfo) = {machineType: SGM}];
+        KOMAPROTOKOLLPARAMETER_1_IDS = 85 [(tableInfo) = {machineType: SGM}];
+        KOMAPROTOKOLLPARAMETER_1_SPES = 86 [(tableInfo) = {machineType: SGM}];
+        IWID = 87 [(tableInfo) = {name: "iwid", machineType: SGM}];
+        IWID2 = 88 [(tableInfo) = {name: "iwid2", machineType: SGM}];
+        IWID3 = 89 [(tableInfo) = {name: "iwid3", machineType: SGM}];
+        PROCESSLOG = 90 [(tableInfo) = {machineType: SGM}];
+         //AKF
+         AKF_EBENE_0_BYTE = 201 [(tableInfo) = {name: "ebene[0].byte_tab", machineType: AKF}];
+         AKF_EBENE_0_WORD = 202 [(tableInfo) = {name: "ebene[0].word_tab", machineType: AKF}];
+         AKF_EBENE_0_DWORD = 203 [(tableInfo) = {name: "ebene[0].dword_tab", machineType: AKF}];
+         AKF_EBENE_0_REAL = 204 [(tableInfo) = {name: "ebene[0].real_tab", machineType: AKF}];
+         AKF_EBENE_1_BYTE = 205 [(tableInfo) = {name: "ebene[1].byte_tab", machineType: AKF}];
+         AKF_EBENE_1_WORD = 206 [(tableInfo) = {name: "ebene[1].word_tab", machineType: AKF}];
+         AKF_EBENE_1_DWORD = 207 [(tableInfo) = {name: "ebene[1].dword_tab", machineType: AKF}];
+         AKF_EBENE_1_REAL = 208 [(tableInfo) = {name: "ebene[1].real_tab", machineType: AKF}];
+         AKF_ISTWERTE_RAM_DWORD = 209 [(tableInfo) = {name: "istwerte_ram.dword_tab", machineType: AKF}];
+         AKF_ISTWERTE_RAM_WORD = 210 [(tableInfo) = {name: "istwerte_ram.word_tab", machineType: AKF}];
+         AKF_ISTWERTE_RAM_REAL = 211 [(tableInfo) = {name: "istwerte_ram.real_tab", machineType: AKF}];
+         AKF_ISTWERTE_RAM_BYTE = 212 [(tableInfo) = {name: "istwerte_ram.byte_tab", machineType: AKF}];
+         AKF_ANALOGINPUT = 213 [(tableInfo) = {name: "analoginput_tab", machineType: AKF}];
+         AKF_ANALOGINPUT_FILTER = 214 [(tableInfo) = {name: "analoginput_filter_tab", machineType: AKF}];
+         AKF_ANALOG_ABSOLUTWERT = 215 [(tableInfo) = {name: "analog_absolutwert_tab", machineType: AKF}];
+         AKF_ANALOG_NULLWERT = 216 [(tableInfo) = {name: "analog_nullwert_tab", machineType: AKF}];
+         AKF_ANALOGOUTPUT = 217 [(tableInfo) = {name: "analogoutput_tab", machineType: AKF}];
+         AKF_OUTPUT = 218 [(tableInfo) = {name: "output_tab", machineType: AKF}];
+         AKF_INPUT = 219 [(tableInfo) = {name: "input_tab", machineType: AKF}];
+         AKF_INPUT_FILTER = 220 [(tableInfo) = {name: "input_filter_tab", machineType: AKF}];
+         AKF_OUTPUT_ANZEIGE = 221 [(tableInfo) = {name: "output_anzeige_tab", machineType: AKF}];
+         AKF_CMOS1_REAL = 222 [(tableInfo) = {name: "cmos1.real_tab", machineType: AKF}];
+         AKF_CMOS1_WORD = 223 [(tableInfo) = {name: "cmos1.word_tab", machineType: AKF}];
+         AKF_CMOS1_DWORD= 224 [(tableInfo) = {name: "cmos1.dword_tab", machineType: AKF}];
+         AKF_EEPROM_CMOS_WORD = 225 [(tableInfo) = {name: "eeprom_cmos.word_tab", machineType: AKF}];
+         AKF_EEPROM_CMOS_REAL = 226 [(tableInfo) = {name: "eeprom_cmos.real_tab", machineType: AKF}];
+         AKF_EEPROM_CMOS_DWORD = 227 [(tableInfo) = {name: "eeprom_cmos.dword_tab", machineType: AKF}];
+         AKF_EEPROM_CMOS_BYTE = 228 [(tableInfo) = {name: "eeprom_cmos.byte_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_1_BYTE = 229 [(tableInfo) = {name: "ebenen_ram[1].byte_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_1_WORD = 230 [(tableInfo) = {name: "ebenen_ram[1].word_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_1_REAL = 231 [(tableInfo) = {name: "ebenen_ram[1].real_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_1_DWORD = 232 [(tableInfo) = {name: "ebenen_ram[1].dword_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_0_BYTE = 233 [(tableInfo) = {name: "ebenen_ram[0].byte_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_0_WORD = 234 [(tableInfo) = {name: "ebenen_ram[0].word_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_0_REAL = 235 [(tableInfo) = {name: "ebenen_ram[0].real_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_0_DWORD = 236 [(tableInfo) = {name: "ebenen_ram[0].dword_tab", machineType: AKF}];
+         AKF_MASCHINENPARAMETER = 237 [(tableInfo) = {name: "maschinenparameter", machineType: AKF}];
+         AKF_FESTWERTE = 238 [(tableInfo) = {name: "festwerte", machineType: AKF}];
+         AKF_FESTWERT_BYTE = 239 [(tableInfo) = {name: "festwert_byte_tab", machineType: AKF}];
+         AKF_FESTWERT_WORD = 240 [(tableInfo) = {name: "festwert_word_tab", machineType: AKF}];
+         AKF_WANDLERKONSTANTE = 241 [(tableInfo) = {name: "wandlerkonstante", machineType: AKF}];
+         AKF_KOMMUNIKATION = 242 [(tableInfo) = {name: "kommunikations_tab", machineType: AKF}];
+         AKF_KOMMUNIKATION_B = 243 [(tableInfo) = {name: "kommunikations_b_tab", machineType: AKF}];
+         AKF_KOMMUNIKATION_D = 244 [(tableInfo) = {name: "kommunikations_d_tab", machineType: AKF}];
+         AKF_KOMMUNIKATION_I = 245 [(tableInfo) = {name: "kommunikations_i_tab", machineType: AKF}];
+         AKF_KOMMUNIKATION_LI = 246 [(tableInfo) = {name: "kommunikations_li_tab", machineType: AKF}];
+         AKF_KOMMUNIKATION_R = 247 [(tableInfo) = {name: "kommunikations_r_tab", machineType: AKF}];
+         AKF_SOLLWERT_D = 248 [(tableInfo) = {name: "sollwert_d_tab", machineType: AKF}];
+         AKF_SOLLWERT_I = 249 [(tableInfo) = {name: "sollwert_i_tab", machineType: AKF}];
+         AKF_SOLLWERT_LI = 250 [(tableInfo) = {name: "sollwert_li_tab", machineType: AKF}];
+         AKF_SOLLWERT_IREG = 251 [(tableInfo) = {name: "sollwert_ireg_tab", machineType: AKF}];
+         AKF_SOLLWERT_ISYNC = 252 [(tableInfo) = {name: "sollwert_isync_tab", machineType: AKF}];
+         AKF_SOLLWERT_LISYNC = 253 [(tableInfo) = {name: "sollwert_lisync_tab", machineType: AKF}];
+         AKF_SOLLWERT_R = 254 [(tableInfo) = {name: "sollwert_r_tab", machineType: AKF}];
+         AKF_SOLLWERT_RSYNC = 255 [(tableInfo) = {name: "sollwert_rsync_tab", machineType: AKF}];
+         AKF_PROCESSLOG_STR = 256 [(tableInfo) = {machineType: AKF}];
+         AKF_KID = 257 [(tableInfo) = {name: "kid", machineType: AKF}];
+         AKF_BASIS_INPUT = 258 [(tableInfo) = {name: "basis_input_tab", machineType: AKF}];
+         AKF_BASIS_KOMM = 259 [(tableInfo) = {name: "basis_komm_tab", machineType: AKF}];
+         AKF_OUTPUT_REMOTE = 260 [(tableInfo) = {name: "output_remote_tab", machineType: AKF}];
+         AKF_ANALOG_ABSOLUTWERT_L = 261 [(tableInfo) = {name: "analog_absolutwert_l_tab", machineType: AKF}];
+         AKF_PIWID = 262 [(tableInfo) = {name: "piwid", machineType: AKF}];
+         AKF_EBENE_AKTIV_BYTE = 263 [(tableInfo) = {name: "ebene_aktiv.byte_tab", machineType: AKF}];
+         AKF_EBENE_AKTIV_WORD = 264 [(tableInfo) = {name: "ebene_aktiv.word_tab", machineType: AKF}];
+         AKF_EBENE_AKTIV_DWORD = 265 [(tableInfo) = {name: "ebene_aktiv.dword_tab", machineType: AKF}];
+         AKF_EBENE_AKTIV_REAL = 266 [(tableInfo) = {name: "ebene_aktiv.real_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_AKTIV_BYTE = 267 [(tableInfo) = {name: "ebenen_ram_aktiv.byte_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_AKTIV_WORD = 268 [(tableInfo) = {name: "ebenen_ram_aktiv.word_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_AKTIV_DWORD = 269 [(tableInfo) = {name: "ebenen_ram_aktiv.dword_tab", machineType: AKF}];
+         AKF_EBENEN_RAM_AKTIV_REAL = 270 [(tableInfo) = {name: "ebenen_ram_aktiv.real_tab", machineType: AKF}];
+         AKF_ISTWERT_ANZEIGE = 271 [(tableInfo) = {name: "istwert_anzeige_tab", machineType: AKF}];
+         AKF_ANALOGINPUT_L = 272 [(tableInfo) = {name: "analoginput_l_tab", machineType: AKF}];
+         AKF_TEXT_EBENE_0_AUFTRAG = 273 [(tableInfo) = {name: "text_ebene[0].auftrag_tab", machineType: AKF}];
+         AKF_TEXT_EBENE_0_BESCHREIBUNG_TEXTE = 274 [(tableInfo) = {machineType: AKF}];
+         AKF_TEXT_EBENE_0_EINRICHTASSI_WKZ = 275 [(tableInfo) = {machineType: AKF}];
+         AKF_TEXT_EBENE_0_FKP = 276 [(tableInfo) = {name: "text_ebene[0].fkp_tab", machineType: AKF}];
+         AKF_TEXT_EBENE_0_TEXT = 277 [(tableInfo) = {name: "text_ebene[0].text_tab", machineType: AKF}];
+         AKF_TEXT_EBENE_1_AUFTRAG = 278 [(tableInfo) = {name: "text_ebene[1].auftrag_tab", machineType: AKF}];
+         AKF_TEXT_EBENE_1_BESCHREIBUNG_TEXTE = 279 [(tableInfo) = {machineType: AKF}];
+         AKF_TEXT_EBENE_1_EINRICHTASSI_WKZ = 280 [(tableInfo) = {machineType: AKF}];
+         AKF_TEXT_EBENE_1_FKP = 281 [(tableInfo) = {name: "text_ebene[1].fkp_tab", machineType: AKF}];
+         AKF_TEXT_EBENE_1_TEXT = 282 [(tableInfo) = {name: "text_ebene[1].text_tab", machineType: AKF}];
+         AKF_KOMAPROTOKOLLPARAMETER_0_IDS = 283 [(tableInfo) = {machineType: AKF}];
+         AKF_KOMAPROTOKOLLPARAMETER_0_SPES = 284 [(tableInfo) = {machineType: AKF}];
+         AKF_KOMAPROTOKOLLPARAMETER_1_IDS = 285 [(tableInfo) = {machineType: AKF}];
+         AKF_KOMAPROTOKOLLPARAMETER_1_SPES = 286 [(tableInfo) = {machineType: AKF}];
+         AKF_IWID = 287 [(tableInfo) = {name: "iwid", machineType: AKF}];
+         AKF_IWID2 = 288 [(tableInfo) = {name: "iwid2", machineType: AKF}];
+         AKF_IWID3 = 289 [(tableInfo) = {name: "iwid3", machineType: AKF}];
+    }
+    required Table table = 1;
+    required uint32 position = 2;
+    required ProtoWert protoWert = 3;
+}
+// (dd) see: https://developers.google.com/protocol-buffers/docs/proto#scalar
+message ProtoWert{
+    enum WertTyp{
+        INVALID = 0;
+        BBYTE   = 5;
+        BINT16  = 9;
+        BINT32  = 1;
+        BUINT16 = 2;
+        BUINT32 = 3;
+        BFLOAT  = 4;
+        BSTRING = 6;
+        BINT64  = 7;    // (dd) aktuell noch nicht von BTyp.h unterstuetzt, aber notwendig fuer gestica
+        BUINT64 = 8;    // (dd) aktuell noch nicht von BTyp.h unterstuetzt, aber notwendig fuer gestica
+        BMELDUNG = 10;
+        BNCSatz = 11;
+    }
+    required WertTyp    WertDatenTyp    = 1;
+    optional int32      mByte           = 2;
+    optional sint32     mInt16          = 3;
+    optional sint32     mInt32          = 4;
+    optional uint32     mUint16         = 5;
+    optional uint32     mUint32         = 6;
+    optional float      mFloat          = 7;
+    optional string     mString         = 8;    //nicht in BDataConverter implementiert
+    optional int64      mInt64          = 9;    //nicht in BDataConverter implementiert
+    optional uint64     mUint64         = 10;   //nicht in BDataConverter implementiert
+    optional ProtoJobEntryDataMeldung mMeldung = 11;
+    optional ProcessLogEntryDataNcSatz mNCSatz = 12;
+}
+
+message ProtoJobEntryDataMeldung{
+    enum MeldungsTyp {
+        Systemfehler = 0;
+        Alarm        = 1;
+        Warnung      = 2;
+        Hinweis      = 3;
+        Invalid      = 4;
+        Status       = 5;
+    }
+    
+    required string      MeldungsTextLocalized  = 1;
+    required sint64      Timestamp              = 2;
+    required string      MeldungsId             = 3;
+    required MeldungsTyp Meldungstyp            = 4;
+    required bool        IsAbbruchmeldung       = 5;
+    required uint32      LeitrechnerKategorie   = 6;
+    required uint32      MeldungsKategorie      = 7;
+    required uint32      KIdMeldungsVerursacher = 8;
+    required bool        IsHistorical           = 9;
+    optional sint64      NcBlock                = 10 [default = -1];
+    optional sint64      NcSatz                 = 11 [default = -1];
+    optional sint64      Schicht                = 12 [default = -1];
+}
+message ProcessLogEntryDataNcSatz{
+	required uint32     BlockNr     = 1;
+	required uint32     SatzNr      = 2;
+	optional int32      GCode       = 3;
+	optional int32      FCode       = 4;
+	optional int32      TCode       = 5;
+	optional int32      SCode       = 6;
+	optional int32      MCode       = 7;
+	optional int32      UCode       = 8;
+	optional int32      OCode       = 9;
+	optional float      XPos        = 10;
+	optional float      YPos        = 11; 
+	optional float      ZPos        = 12; 
+	required uint32     TimeDiff    = 17;
+}

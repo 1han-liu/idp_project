@@ -1,0 +1,150 @@
+# all the containers communicate with in the ml_network
+networks:
+  ml_net:
+    driver: bridge
+# named volumes to store data and log infos
+volumes:
+  influx_data:
+  mosquitto_log:
+  mosquitto_data:
+  rabbitmq_data:
+  rabbitmq_log:
+# services
+services:
+  # persistent using influxdb
+  influxdb:
+    image: influxdb:1.8.10-alpine
+    platform: linux/amd64
+    networks:
+      - ml_net
+    ports:
+      - 8086:8086
+    volumes:
+      - influx_data:/var/lib/influxdb
+      - ./docker-volumes/influxdb/config:/etc/influxdb
+  # ingestion using telgraf
+  telegraf:
+    # Customized dockerfile
+    build: components/telegraf
+    platform: linux/amd64 
+    networks:
+      - ml_net
+    volumes:
+      - ./docker-volumes/telegraf/config:/etc/telegraf
+    depends_on:
+      - influxdb
+      - mosquitto
+      - rabbitmq
+    restart: on-failure
+  # external component for sine wave simulator
+  mosquitto:
+    image: eclipse-mosquitto
+    networks:
+      - ml_net
+    ports:
+      - 1883:1883
+    volumes:
+      - ./docker-volumes/mosquitto/config:/mosquitto/config
+      - mosquitto_log:/mosquitto/log
+      - mosquitto_data:/mosquitto/data
+  # communication using rabbitmq
+  rabbitmq: # long starting time
+    image: rabbitmq:3.11.3-management-alpine
+    networks:
+      - ml_net
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    volumes:
+      - ./docker-volumes/rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_log:/var/log/rabbitmq
+  # visualization application using grafana
+  grafana:
+    image: grafana/grafana
+    networks: 
+      - ml_net
+    ports:
+      - 3000:3000
+    volumes:
+      - ./docker-volumes/grafana:/var/lib/grafana
+    # environment variables
+    environment:
+      # bring the refresh interval from default 5s to 1s: quicker
+      - GF_DASHBOARDS_MIN_REFRESH_INTERVAL=1s
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_SKIP_VERIFY=true
+      # these settings are saved in .env file (please create one at the same location of this file according to the user manual) for email notification
+      - GF_SMTP_HOST=${GF_SMTP_HOST}
+      - GF_SMTP_USER=${GF_SMTP_USER}
+      - GF_SMTP_PASSWORD=${GF_SMTP_PASSWORD}
+      - GF_SMTP_FROM_ADDRESS=${GF_SMTP_FROM_ADDRESS}
+      - GF_SMTP_FROM_NAME=${GF_SMTP_FROM_NAME}
+    depends_on:
+      - influxdb
+  # custom UI service
+  ui:
+    build:
+      dockerfile: ./components/ui/Dockerfile
+      context: ./
+      args:
+        COMPONENT_NAME: ui
+    networks:
+      - ml_net
+    ports:
+      - 8050:8050
+    volumes:
+      - ./components/ui/app:/app # dev-opt
+    depends_on:
+      - influxdb
+      - rabbitmq
+  # preprocessing function
+  # preprocessor与当前项目无关 commit掉
+  #preprocessor:
+  #  build: 
+  #    dockerfile: ./components/preprocessor/Dockerfile
+  #    context: ./
+  #    args:
+  #     COMPONENT_NAME: preprocessor
+  #  networks:
+  #    - ml_net
+  #  volumes:
+      # for easier development: can be removed in release version
+  #    - ./components/preprocessor/app:/app # dev-opt
+  #  depends_on:
+  #    - influxdb
+  # ML-algorithm function
+
+  # modelserver 当前项目无关 commit掉
+  # modelserver:
+  #  build:
+  #    dockerfile: ./components/modelserver/Dockerfile
+  #    context: ./
+  #    args:
+  #      COMPONENT_NAME: modelserver
+  #  networks:
+  #    - ml_net
+  #  volumes:
+      # for easier development: can be removed in release version
+  #    - ./components/modelserver/app:/app # dev-opt
+  #  depends_on:
+  #    - influxdb
+  # ML-algorithm function
+
+  # processor 与当前项目无关 commit掉
+  # processor:
+  #  build:
+  #    dockerfile: ./components/processor/Dockerfile
+  #    context: ./
+  #    args:
+  #      COMPONENT_NAME: processor
+  #  networks:
+  #    - ml_net
+  #  volumes:
+      # for easier development: can be removed in release version
+  #    - ./components/processor/app:/app # dev-opt
+  #  depends_on:
+  #    - influxdb
+  #    - rabbitmq

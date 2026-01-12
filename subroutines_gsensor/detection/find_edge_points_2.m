@@ -1,0 +1,58 @@
+function I = find_edge_points_2(I, n, theta, params_G)
+    % find crystal to get rid of other objects like bubbles
+    I_crystal = rgb2gray(I);
+    I_crystal = medfilt2(I_crystal, [50, 50], 'symmetric');
+    I_crystal_smoothed = I_crystal;
+
+    I_crystal = adapthisteq(I_crystal);
+    I_crystal = imsharpen(I_crystal, 'Radius', 2, 'Amount', 2);
+    I_crystal = ~imbinarize(I_crystal);
+    stat = regionprops(I_crystal, 'Area');
+    area = max([stat.Area]);
+    I_crystal = bwareaopen(I_crystal, area);
+    I_crystal = imclose(I_crystal, strel('disk', round(sqrt(area/pi) / 3)));
+    I_crystal = imdilate(I_crystal, strel('disk', 50));
+    I_crystal_anti = imdilate(~I_crystal, strel('disk', 10));
+    I_crystal_anti_2 = I_crystal_anti;
+    I_crystal_anti_2 = padarray(I_crystal_anti_2, [3 3], 1, 'both');
+    I_crystal_anti_2 = imdilate(I_crystal_anti_2, strel('disk', 150));
+    I_gray_crystal = I_crystal_smoothed;
+    I_gray_crystal(~I_crystal) = 0;
+    % 
+    % % used found crystal to find regions of 3 gradients
+    % I = I_gray_crystal;
+    % I = medfilt2(I, [50, 50], 'symmetric');
+    % I_gray = I;
+    % [Gx, Gy] = imgradientxy(I);
+    % Gn = n(1) * Gx + n(2) * Gy;
+    % Gn_norm = mat2gray(Gn);
+    % Gn_enhanced = histeq(Gn_norm);
+    % alpha = 0.5;
+    % I_enhanced = double(I) + alpha * Gn_enhanced;
+    % 
+    % score = zscore([double(I_gray(:)), I_enhanced(:)]);
+    % I_label = reshape(kmeans(score,3), size(I));
+    % 
+    % I = edge(I_label, 'nothinning');
+    % I = imdilate(I, strel('disk', 3));
+
+    % enhance by gradient
+    I = I_gray_crystal; % rgb2gray(I);
+    I_gray = I;
+    I = medfilt2(I, [50, 50], 'symmetric');
+    [Gx, Gy] = imgradientxy(I);
+    Gn = n(1) * Gx + n(2) * Gy;
+    Gn_norm = mat2gray(Gn);
+    Gn_enhanced = histeq(Gn_norm);
+    alpha = 0.5;
+    I = uint8(double(I_gray) + alpha * Gn_enhanced);
+
+    I = adapthisteq(I);
+    I = imbinarize(I,'adaptive','ForegroundPolarity','dark');
+    I = imclose(~I, strel('line', floor(min(size(I, [1, 2])))/params_G.imclose_divider, 90-theta));
+    I = imopen(I, strel('disk', 10));
+    I = edge(I, 'nothinning');
+    I = imdilate(I, strel('disk', 5));
+    I(I_crystal_anti) = 0;
+    % I(~I_crystal_anti_2) = 0;
+end

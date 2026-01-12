@@ -1,0 +1,6 @@
+dash==2.15.0
+pandas
+pillow
+influxdb
+scipy
+scikit-image
